@@ -52,7 +52,7 @@ public class Main extends Application {
   		BorderPane menu = new BorderPane();
 	        //create an image viewer for the background
 	        ImageView viewer = new ImageView();
-	        Image bg = new Image(Main2.class.getResourceAsStream("MenuBackground2.png"));
+	        Image bg = new Image(Main.class.getResourceAsStream("MenuBackground2.png"));
 	        viewer.setImage(bg);
 
 	        //create HBox for the gameTitle held in the top panel
