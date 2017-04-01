@@ -41,7 +41,7 @@ public class Main extends Application {
       		menuTitle.setFill(Color.BLUE);
       		Text gameTitle = new Text("Knights vs Dragons");
       		gameTitle.setFont(Font.font("Arial", FontWeight.EXTRA_BOLD, 30));
-      		gameTitle.setFill(Color.BLUE);
+      		gameTitle.setFill(Color.RED);
 
 
 		//placeholder thing to display when they hit high score button
