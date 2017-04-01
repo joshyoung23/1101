@@ -37,26 +37,43 @@ public class Main extends Application {
 
 		//create a title for the menu
 		Text menuTitle = new Text("Main Menu");
-		menuTitle.setFont(titleFont);
+		menuTitle.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+      		menuTitle.setFill(Color.BLUE);
+      		Text gameTitle = new Text("Knights vs Dragons");
+      		gameTitle.setFont(Font.font("Arial", FontWeight.EXTRA_BOLD, 30));
+      		gameTitle.setFill(Color.BLUE);
 
 
 		//placeholder thing to display when they hit high score button
 		//Text highScoreText = new Text("High score function not available yet...");
 		//highScoreText.setVisible(false);
 
-		//create a grid pane for the menu (probably shouldn't be a grid Pane tbh)
-		GridPane menu = new GridPane();
-		menu.setAlignment(Pos.CENTER);
-		menu.setHgap(10);
-		menu.setVgap(20);
-		menu.setStyle("-fx-background-color: BEIGE");
-		menu.add(playButton,3,3);
-		menu.add(exitButton,3,4);
+		//create a border pane for the menu
+  		BorderPane menu = new BorderPane();
+	        //create an image viewer for the background
+	        ImageView viewer = new ImageView();
+	        Image bg = new Image(Main2.class.getResourceAsStream("MenuBackground2.png"));
+	        viewer.setImage(bg);
+
+	        //create HBox for the gameTitle held in the top panel
+	        HBox hbox = new HBox();
+	        hbox.setPadding(new Insets(15, 85, 15, 85));
+	        hbox.setSpacing(50);
+  	        hbox.setStyle("fx-background-color: #336699;");//i dont really know what this does ¯\_(..)_/¯
+ 
+	        //create Vbox for the buttons and menuTitle
+	        VBox vbox = new VBox();
+	        vbox.setPadding(new Insets(180));//side lengths
+	        vbox.setSpacing(10);//gaps
 		Text highScoreText = new Text("Josh sucks at league of legends...");
-		highScoreText.setVisible(false);
-		menu.add(highScoreButton,3,5);
-		menu.add(menuTitle,3,1);
-		menu.add(highScoreText, 3, 6);
+
+	        //add viewer to the border pane
+	        menu.getChildren().add(viewer);
+	        // add titles and buttons to the hbx/vbox
+	        hbox.getChildren().add(gameTitle);
+	        vbox.getChildren().addAll(menuTitle, playButton, exitButton, highScoreButton);
+
+	        highScoreText.setVisible(false);
 
 		//create the two scenes
 		mainMenu = new Scene(menu, 440, 440, Color.LIGHTGRAY);
@@ -114,7 +131,9 @@ public class Main extends Application {
 					break;
 			}
 	    });
-
+		 //sets where the vbox and hbox should be
+     		 menu.setCenter(vbox);
+     		 menu.setTop(hbox);
 		//show the window (duh)
 		window.show();
 	}
