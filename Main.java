@@ -31,9 +31,17 @@ public class Main extends Application {
 		window.setResizable(false);
 
 		//create three buttons
+		DropShadow dshadow = new DropShadow();
 		Button playButton = new Button("Play");
+      		playButton.setEffect(dshadow);
+      		playButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
 		Button exitButton = new Button("Exit");
-		Button highScoreButton = new Button("High Scores");
+		exitButton.setEffect(dshadow);
+      		exitButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
+      		Button highScoreButton = new Button("High Scores");
+      		highScoreButton.setEffect(dshadow);
+      		highScoreButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
+
 
 		//create a title for the menu
 		Text menuTitle = new Text("Main Menu");
