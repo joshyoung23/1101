@@ -22,6 +22,10 @@ public class Main extends Application {
 	private Font titleFont = new Font("Calibri",30);
 	private Scene mainMenu;
 	private Scene gameArea;
+	private MediaPlayer select = new MediaPlayer(new Media(new File("select.wav").toURI().toString()));
+   	private MediaPlayer click = new MediaPlayer(new Media(new File("click.wav").toURI().toString()));
+   	private MediaPlayer pause = new MediaPlayer(new Media(new File("pause.wav").toURI().toString()));
+   	private MediaPlayer resume = new MediaPlayer(new Media(new File("play.wav").toURI().toString()));
 
 	public static void main(String[] args){
 		launch(args);
@@ -37,11 +41,6 @@ public class Main extends Application {
 		//make the game window a fixed size
 		window.setResizable(false);
 
-		Media select = new Media(new File("select.wav").toURI().toString());
-		Media click = new Media(new File("click.wav").toURI().toString());
-		Media pause = new Media(new File("pause.wav").toURI().toString());
-		Media play = new Media(new File("play.wav").toURI().toString());
-
 		DropShadow dshadow = new DropShadow();
 		
 		//create three buttons (play, exit, options)
@@ -50,67 +49,61 @@ public class Main extends Application {
 			playButton.setEffect(dshadow);
 			playButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
 			
-			playButton.setOnMouseEntered(event -> {
-				MediaPlayer mediaPlayer = new MediaPlayer(select);
-				mediaPlayer.play();
-			});
+			playButton.setOnMouseEntered(event -> select.play());
+			playButton.setOnMouseExited(e -> select.stop());
 
 		Button exitButton = new Button("Exit");
 			exitButton.setEffect(dshadow);
 			exitButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
 			
-			exitButton.setOnMouseEntered(event -> {
-				MediaPlayer mediaPlayer = new MediaPlayer(select);
-				mediaPlayer.play();
-			});
+			exitButton.setOnMouseEntered(event -> select.play());
+			exitButton.setOnMouseExited(e -> select.stop());
 
 		Button optionsButton = new Button("Options");
 			optionsButton.setEffect(dshadow);
 			optionsButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
 			
-			optionsButton.setOnMouseEntered(event -> {
-				MediaPlayer mediaPlayer = new MediaPlayer(select);
-				mediaPlayer.play();
-			});
+			optionsButton.setOnMouseEntered(event -> select.play());
+			optionsButton.setOnMouseExited(e -> select.stop());
 
-		//create a title for the menu
+		//create a title for the menu and for the Game
 		Text menuTitle = new Text("Main Menu");
-			menuTitle.setFont(Font.font("Arial", FontWeight.BOLD, 25));
-      			menuTitle.setFill(Color.BLUE);
+			menuTitle.setFont(Font.font("Arial", FontWeight.BOLD, 35));
+      			menuTitle.setFill(Color.DARKBLUE);
 		
       		Text gameTitle = new Text("Knights vs Dragons");
-      			gameTitle.setFont(Font.font("Arial", FontWeight.EXTRA_BOLD, 30));
+      			gameTitle.setFont(Font.font("Arial", FontWeight.EXTRA_BOLD, 40));
       			gameTitle.setFill(Color.RED);
 
-		//create a border pane for the menu
+		//create a border pane for the menu scene
   		BorderPane menu = new BorderPane();
+			//set the prefered size of the menu
+			menu.setPrefSize(440,440);
+		
 			//create an image viewer for the background
 			ImageView viewer = new ImageView();
 			Image backGround = new Image(Main.class.getResourceAsStream("MenuBackground2.png"));
 			viewer.setImage(backGround);
-
-			//create HBox for the gameTitle held in the top panel
-			HBox hbox = new HBox();
-			hbox.setPadding(new Insets(15, 85, 15, 85));
-			hbox.setSpacing(50);
-			hbox.setStyle("fx-background-color: #336699;");//i dont really know what this does ¯\_(..)_/¯
-
-			//create Vbox for the buttons and menuTitle
-			VBox vbox = new VBox();
-			vbox.setPadding(new Insets(180));//side lengths
-			vbox.setSpacing(10);//gaps
-
 			//add viewer to the border pane
 			menu.getChildren().add(viewer);
-			// add titles and buttons to the hbx/vbox
+		
+			//create HBox for the gameTitle held in the top panel
+			HBox hbox = new HBox();
+			hbox.setPadding(new Insets(65,0,0,0)); //sets it 65 pixels down from the top
+			hbox.setAlignment(Pos.CENTER); 
 			hbox.getChildren().add(gameTitle);
+		
+			//create Vbox for the buttons and menuTitle
+			VBox vbox = new VBox();
+			vbox.setSpacing(10); //gaps between the nodes
+			vbox.setAlignment(Pos.CENTER); //align the buttons in the centre of the box
 			vbox.getChildren().addAll(menuTitle, playButton, exitButton, optionsButton);
 		
-			//sets where the vbox and hbox should be
+			//sets where the vbox and hbox should be 
      			menu.setCenter(vbox);
      			menu.setTop(hbox);
 		
-		//create the two scenes
+		//create the two scenes (one for the menu, one for the gameArea)
 		mainMenu = new Scene(menu, 440, 440, Color.LIGHTGRAY);
 
 		gameboard = new GameBoard(p1,p2,window,mainMenu);
@@ -120,27 +113,23 @@ public class Main extends Application {
 		window.setScene(mainMenu);
 
 		//when they click the play button
-		playButton.setOnAction(e ->{
-			MediaPlayer mediaPlayer = new MediaPlayer(click);
-			mediaPlayer.play();
+      		playButton.setOnMousePressed(e -> click.play());
+		playButton.setOnMouseReleased(e ->{
+			click.stop();
 			window.setScene(gameArea);  //switch to the gameArea scene
 			gameboard.reset();	//reset the game board icons
 			gameboard.start();	//start the timer
 		});
 
 		//when they click exit
-		exitButton.setOnAction(e ->{
-			MediaPlayer mediaPlayer = new MediaPlayer(click);
-			mediaPlayer.play();
-			System.exit(0);		//exit program
-		});
+		exitButton.setOnMousePressed(e -> click.play());
+      		exitButton.setOnMouseReleased(e -> System.exit(0));
 
-		//when they click high SCore button
-		optionsButton.setOnAction(e ->{
-			MediaPlayer mediaPlayer = new MediaPlayer(click);
-			mediaPlayer.play();
-		});
 
+		//when they click the options button
+		optionsButton.setOnMousePressed(e -> click.play());
+      		optionsButton.setOnMouseReleased(e -> click.stop());
+		
 		//while gameArea is being displayed .... update direction with W,A,S,D  and I,J,K,L
 		//also, pause the game with C ,   resume with V,    return to main menu (and reset board) with B
 		gameArea.setOnKeyPressed(e -> {
@@ -162,20 +151,27 @@ public class Main extends Application {
 				case L: p2.setDir(Player.Direction.RIGHT);
 					break;
 				case C: gameboard.pause();
-					MediaPlayer mediaPlayer = new MediaPlayer(pause);
-					mediaPlayer.play();
+					pause.play();	//play the pause sound
 					break;
 				case V: gameboard.play();
-					mediaPlayer = new MediaPlayer(play);
-					mediaPlayer.play();
+					resume.play(); //play the "resume" sound
 					break;
 				case B: window.setScene(mainMenu);
 					gameboard.reset();
-					mediaPlayer = new MediaPlayer(select);
-					mediaPlayer.play();
+					select.play();
 					break;
 			}
 	    	});
+		gameArea.setOnKeyReleased(e -> {
+			switch(e.getCode()){
+				case C: pause.stop(); //stop the pause sound
+					break;
+				case V: resume.stop(); //stop the resume sound
+					break;
+				case B: select.stop(); //stop the select sound
+					break;
+			}
+		});
 		
 		//show the window (duh)
 		window.show();
