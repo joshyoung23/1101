@@ -3,11 +3,15 @@ import javafx.animation.Timeline;
 import javafx.geometry.*;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 import javafx.stage.*;
 import javafx.scene.*;
 import javafx.scene.control.Button;
+
+import java.io.File;
 
 public class GameBoard  {
 
@@ -25,6 +29,16 @@ public class GameBoard  {
     private Label winner;  //displays which player was the winner, only visible after someone wins
     private VBox winBox;   //holds the button and the label, this is what appears on game ending
     private Font winFont = new Font("Impact",40); //call of duty font L M A O
+    Media select = new Media(new File("select.wav").toURI().toString());
+    Media click = new Media(new File("click.wav").toURI().toString());
+    Media crash = new Media(new File("crash.wav").toURI().toString());
+    Media song = new Media(new File("song.wav").toURI().toString());
+    Media win = new Media(new File("winner.wav").toURI().toString());
+
+
+    MediaPlayer mediaPlayer = new MediaPlayer(song);
+
+
 
     //constructor that fills the grid pane with "walls" and "empty cells"
     //it also initializes all of the global variables
@@ -40,7 +54,15 @@ public class GameBoard  {
 
         //create a new button that returns the user to the main menu
         button = new Button("Game Over, Return to Menu");
-        button.setOnAction(e -> window.setScene(menu));
+        button.setOnMouseEntered( event -> {
+            MediaPlayer mediaPlayer = new MediaPlayer(select);
+            mediaPlayer.play();
+        });
+        button.setOnAction(e -> {
+            window.setScene(menu);
+            MediaPlayer mediaPlayer = new MediaPlayer(click);
+            mediaPlayer.play();
+        });
 
         //create the label that displays the winner
         winner = new Label();
@@ -83,12 +105,24 @@ public class GameBoard  {
         //draw the player icons on the GridPane in their starting positions
         drawIcons();
 
+
         //create the timeline which renders and redraws the player icons as long as there is no winner
         time = new Timeline(new KeyFrame(Duration.millis(150), e-> { //<<<- duration is how quickly the game renders()
 
             if(winner() && count == 1){     //if there IS a winner, make the "return to main menu" button appear
                 count = 0;                  //set count to 0 so that the button only appears once
                 winBox.setVisible(true);
+                mediaPlayer.stop();
+                mediaPlayer = new MediaPlayer(crash);
+                mediaPlayer.play();
+                mediaPlayer.setOnEndOfMedia(new Runnable() {
+                    @Override
+                    public void run() {
+                        mediaPlayer = new MediaPlayer(win);
+                        mediaPlayer.play();
+                    }
+                });
+
             }else if(!winner()) {
                 render();
                 drawIcons();
@@ -103,16 +137,26 @@ public class GameBoard  {
     //start the timer again from the beginning
     public void start(){
         time.playFromStart();
+        mediaPlayer = new MediaPlayer(song);
+        mediaPlayer.setOnEndOfMedia(new Runnable() {
+            @Override
+            public void run() {
+                mediaPlayer.seek(Duration.ZERO);
+            }
+        });
+        mediaPlayer.play();
     }
 
     //un-pause the timer
     public void play(){
         time.play();
+        mediaPlayer.play();
     }
 
     //pause the timer
     public void pause(){
         time.pause();
+        mediaPlayer.pause();
     }
 
     //get method to return the "realGameArea" to the main class so it can be displayed in a scene
