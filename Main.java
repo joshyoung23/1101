@@ -11,7 +11,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.*;
 import javafx.geometry.*;
 import javafx.scene.text.*;
-
 import java.io.File;
 
 public class Main extends Application {
@@ -43,73 +42,74 @@ public class Main extends Application {
 		Media pause = new Media(new File("pause.wav").toURI().toString());
 		Media play = new Media(new File("play.wav").toURI().toString());
 
-
-		//create three buttons
 		DropShadow dshadow = new DropShadow();
+		
+		//create three buttons (play, exit, options)
+		
 		Button playButton = new Button("Play");
-		playButton.setEffect(dshadow);
-		playButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
-		playButton.setOnMouseEntered(event -> {
-			MediaPlayer mediaPlayer = new MediaPlayer(select);
-			mediaPlayer.play();
-		});
+			playButton.setEffect(dshadow);
+			playButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
+			
+			playButton.setOnMouseEntered(event -> {
+				MediaPlayer mediaPlayer = new MediaPlayer(select);
+				mediaPlayer.play();
+			});
 
 		Button exitButton = new Button("Exit");
-		exitButton.setEffect(dshadow);
-		exitButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
-		exitButton.setOnMouseEntered(event -> {
-			MediaPlayer mediaPlayer = new MediaPlayer(select);
-			mediaPlayer.play();
-		});
+			exitButton.setEffect(dshadow);
+			exitButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
+			
+			exitButton.setOnMouseEntered(event -> {
+				MediaPlayer mediaPlayer = new MediaPlayer(select);
+				mediaPlayer.play();
+			});
 
-		Button highScoreButton = new Button("Options");
-		highScoreButton.setEffect(dshadow);
-		highScoreButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
-		highScoreButton.setOnMouseEntered(event -> {
-			MediaPlayer mediaPlayer = new MediaPlayer(select);
-			mediaPlayer.play();
-		});
+		Button optionsButton = new Button("Options");
+			optionsButton.setEffect(dshadow);
+			optionsButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
+			
+			optionsButton.setOnMouseEntered(event -> {
+				MediaPlayer mediaPlayer = new MediaPlayer(select);
+				mediaPlayer.play();
+			});
 
 		//create a title for the menu
 		Text menuTitle = new Text("Main Menu");
-		menuTitle.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-      		menuTitle.setFill(Color.BLUE);
+			menuTitle.setFont(Font.font("Arial", FontWeight.BOLD, 25));
+      			menuTitle.setFill(Color.BLUE);
+		
       		Text gameTitle = new Text("Knights vs Dragons");
-      		gameTitle.setFont(Font.font("Arial", FontWeight.EXTRA_BOLD, 30));
-      		gameTitle.setFill(Color.RED);
-
-
-		//placeholder thing to display when they hit high score button
-		//Text highScoreText = new Text("High score function not available yet...");
-		//highScoreText.setVisible(false);
+      			gameTitle.setFont(Font.font("Arial", FontWeight.EXTRA_BOLD, 30));
+      			gameTitle.setFill(Color.RED);
 
 		//create a border pane for the menu
   		BorderPane menu = new BorderPane();
-	        //create an image viewer for the background
-	        ImageView viewer = new ImageView();
-	        Image bg = new Image(Main.class.getResourceAsStream("MenuBackground2.png"));
-	        viewer.setImage(bg);
+			//create an image viewer for the background
+			ImageView viewer = new ImageView();
+			Image backGround = new Image(Main.class.getResourceAsStream("MenuBackground2.png"));
+			viewer.setImage(backGround);
 
-	        //create HBox for the gameTitle held in the top panel
-	        HBox hbox = new HBox();
-	        hbox.setPadding(new Insets(15, 85, 15, 85));
-	        hbox.setSpacing(50);
-  	        hbox.setStyle("fx-background-color: #336699;");//i dont really know what this does ¯\_(..)_/¯
- 
-	        //create Vbox for the buttons and menuTitle
-	        VBox vbox = new VBox();
-	        vbox.setPadding(new Insets(180));//side lengths
-	        vbox.setSpacing(10);//gaps
-		Text highScoreText = new Text("Josh sucks at league of legends...");
+			//create HBox for the gameTitle held in the top panel
+			HBox hbox = new HBox();
+			hbox.setPadding(new Insets(15, 85, 15, 85));
+			hbox.setSpacing(50);
+			hbox.setStyle("fx-background-color: #336699;");//i dont really know what this does ¯\_(..)_/¯
 
-	        //add viewer to the border pane
-	        menu.getChildren().add(viewer);
-	        // add titles and buttons to the hbx/vbox
-	        hbox.getChildren().add(gameTitle);
-	        vbox.getChildren().addAll(menuTitle, playButton, exitButton, highScoreButton);
+			//create Vbox for the buttons and menuTitle
+			VBox vbox = new VBox();
+			vbox.setPadding(new Insets(180));//side lengths
+			vbox.setSpacing(10);//gaps
 
-	        highScoreText.setVisible(false);
-
+			//add viewer to the border pane
+			menu.getChildren().add(viewer);
+			// add titles and buttons to the hbx/vbox
+			hbox.getChildren().add(gameTitle);
+			vbox.getChildren().addAll(menuTitle, playButton, exitButton, optionsButton);
+		
+			//sets where the vbox and hbox should be
+     			menu.setCenter(vbox);
+     			menu.setTop(hbox);
+		
 		//create the two scenes
 		mainMenu = new Scene(menu, 440, 440, Color.LIGHTGRAY);
 
@@ -124,9 +124,8 @@ public class Main extends Application {
 			MediaPlayer mediaPlayer = new MediaPlayer(click);
 			mediaPlayer.play();
 			window.setScene(gameArea);  //switch to the gameArea scene
-			gameboard.reset();			//reset the game board icons
-			gameboard.start();			//start the timer
-			highScoreText.setVisible(false); //re-hide the high score thing
+			gameboard.reset();	//reset the game board icons
+			gameboard.start();	//start the timer
 		});
 
 		//when they click exit
@@ -137,16 +136,15 @@ public class Main extends Application {
 		});
 
 		//when they click high SCore button
-		highScoreButton.setOnAction(e ->{
+		optionsButton.setOnAction(e ->{
 			MediaPlayer mediaPlayer = new MediaPlayer(click);
 			mediaPlayer.play();
-			highScoreText.setVisible(true);  //for now, display placeholder text
 		});
 
 		//while gameArea is being displayed .... update direction with W,A,S,D  and I,J,K,L
 		//also, pause the game with C ,   resume with V,    return to main menu (and reset board) with B
 		gameArea.setOnKeyPressed(e -> {
-	        switch (e.getCode()){
+	       		switch (e.getCode()){
 				case W: p1.setDir(Player.Direction.UP);
 					break;
 				case A: p1.setDir(Player.Direction.LEFT);
@@ -172,17 +170,16 @@ public class Main extends Application {
 					mediaPlayer.play();
 					break;
 				case B: window.setScene(mainMenu);
-						gameboard.reset();
-						mediaPlayer = new MediaPlayer(select);
-						mediaPlayer.play();
+					gameboard.reset();
+					mediaPlayer = new MediaPlayer(select);
+					mediaPlayer.play();
 					break;
 			}
-	    });
-		 //sets where the vbox and hbox should be
-     		 menu.setCenter(vbox);
-     		 menu.setTop(hbox);
+	    	});
+		
 		//show the window (duh)
 		window.show();
-	}
+		
+	}//end start method
 
-}
+}//end class
