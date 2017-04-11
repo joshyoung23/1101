@@ -27,7 +27,8 @@ public class GameBoard  {
     private Button button; //button that returns to the main menu, (only appears when a player loses)
     private int count = 1; //count variable, used so that the "return to menu" button only appears once
     private Label winner;  //displays which player was the winner, only visible after someone wins
-    private VBox winBox;   //holds the button and the label, this is what appears on game ending
+    private VBox winBox;   //holds the "Return to main menu" button and the label
+    private BorderPane winBoxPane; //holds the winBox centered in the scene. Appears on game ending. 
     private Font winFont = new Font("Impact",40); //call of duty font L M A O
     Media select = new Media(new File("select.wav").toURI().toString());
     Media click = new Media(new File("click.wav").toURI().toString());
@@ -66,18 +67,23 @@ public class GameBoard  {
 
         //create the label that displays the winner
         winner = new Label();
-        winner.setFont(winFont);
+            winner.setFont(winFont);
 
         //put the label and the button into a vertical box
         winBox = new VBox(winner,button);
-        winBox.setPadding(new Insets(20,20,20,20));
-        winBox.setSpacing(20);
-        winBox.setVisible(false);  //hide the box by default
-        winBox.setAlignment(Pos.CENTER);
-        winBox.setTranslateX(110);
-        winBox.setTranslateY(110);
-
-        winBox.setStyle("-fx-background-color: WHITE");
+            winBox.setSpacing(20);
+            winBox.setAlignment(Pos.CENTER);
+            winBox.setStyle("-fx-background-color: WHITE");
+        
+        //store the winBox inside a BorderPane so that it can be Centered on the scene
+        winBoxPane = new BorderPane();
+            winBoxPane.setPrefSize(280,160);
+            winBoxPane.setAlignment(winBox,Pos.CENTER);
+            winBoxPane.setCenter(winBox);
+            winBoxPane.setTranslateX(80);
+            winBoxPane.setTranslateY(140);
+            winBoxPane.setVisible(false);
+        
         //create the GridPane which holds the images for EMPTY, PLAYER, or WALL cells.
         this.pane = new GridPane();
         //create the Cell 2D array and fill it with EMPTY cells
@@ -131,7 +137,7 @@ public class GameBoard  {
         time.setCycleCount(Timeline.INDEFINITE); //this means the timeline runs forever unless stopped
 
         //add the GridPane and the invisible button to the "realGameArea"
-        realGameArea.getChildren().addAll(pane,winBox);
+        realGameArea.getChildren().addAll(pane,winBoxPane);
     }
 
     //start the timer again from the beginning
@@ -197,7 +203,7 @@ public class GameBoard  {
         //set count back to 1
         count = 1;
         //hide the "return to main menu" button again
-        winBox.setVisible(false);
+        winBoxPane.setVisible(false);
     }
 
     //redraw the game board to display the new player locations
