@@ -167,6 +167,7 @@ public class GameBoard  {
     //stop the timer, reset each player and re-fill the game board with EMPTY and WALL cells
     public void reset(){
         time.stop();
+        mediaPlayer.stop();
         p1.reset();
         p2.reset();
         //fill the array with EMPTY cells
