@@ -1,11 +1,18 @@
 import javafx.application.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.stage.*;
 import javafx.geometry.*;
 import javafx.scene.text.*;
+
+import java.io.File;
 
 public class Main extends Application {
 
@@ -26,22 +33,42 @@ public class Main extends Application {
 
 		//add title to the top of the game window
 		window.setTitle("Tron game");
+		window.getIcons().add(new Image("file:MenuBackGround2.png"));
 		
 		//make the game window a fixed size
 		window.setResizable(false);
 
+		Media select = new Media(new File("select.wav").toURI().toString());
+		Media click = new Media(new File("click.wav").toURI().toString());
+		Media pause = new Media(new File("pause.wav").toURI().toString());
+		Media play = new Media(new File("play.wav").toURI().toString());
+
+
 		//create three buttons
 		DropShadow dshadow = new DropShadow();
 		Button playButton = new Button("Play");
-      		playButton.setEffect(dshadow);
-      		playButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
+		playButton.setEffect(dshadow);
+		playButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
+		playButton.setOnMouseEntered(event -> {
+			MediaPlayer mediaPlayer = new MediaPlayer(select);
+			mediaPlayer.play();
+		});
+
 		Button exitButton = new Button("Exit");
 		exitButton.setEffect(dshadow);
-      		exitButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
-      		Button highScoreButton = new Button("High Scores");
-      		highScoreButton.setEffect(dshadow);
-      		highScoreButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
+		exitButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
+		exitButton.setOnMouseEntered(event -> {
+			MediaPlayer mediaPlayer = new MediaPlayer(select);
+			mediaPlayer.play();
+		});
 
+		Button highScoreButton = new Button("Options");
+		highScoreButton.setEffect(dshadow);
+		highScoreButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
+		highScoreButton.setOnMouseEntered(event -> {
+			MediaPlayer mediaPlayer = new MediaPlayer(select);
+			mediaPlayer.play();
+		});
 
 		//create a title for the menu
 		Text menuTitle = new Text("Main Menu");
@@ -94,6 +121,8 @@ public class Main extends Application {
 
 		//when they click the play button
 		playButton.setOnAction(e ->{
+			MediaPlayer mediaPlayer = new MediaPlayer(click);
+			mediaPlayer.play();
 			window.setScene(gameArea);  //switch to the gameArea scene
 			gameboard.reset();			//reset the game board icons
 			gameboard.start();			//start the timer
@@ -102,11 +131,15 @@ public class Main extends Application {
 
 		//when they click exit
 		exitButton.setOnAction(e ->{
+			MediaPlayer mediaPlayer = new MediaPlayer(click);
+			mediaPlayer.play();
 			System.exit(0);		//exit program
 		});
 
 		//when they click high SCore button
 		highScoreButton.setOnAction(e ->{
+			MediaPlayer mediaPlayer = new MediaPlayer(click);
+			mediaPlayer.play();
 			highScoreText.setVisible(true);  //for now, display placeholder text
 		});
 
@@ -131,11 +164,17 @@ public class Main extends Application {
 				case L: p2.setDir(Player.Direction.RIGHT);
 					break;
 				case C: gameboard.pause();
+					MediaPlayer mediaPlayer = new MediaPlayer(pause);
+					mediaPlayer.play();
 					break;
 				case V: gameboard.play();
+					mediaPlayer = new MediaPlayer(play);
+					mediaPlayer.play();
 					break;
 				case B: window.setScene(mainMenu);
 						gameboard.reset();
+						mediaPlayer = new MediaPlayer(select);
+						mediaPlayer.play();
 					break;
 			}
 	    });
