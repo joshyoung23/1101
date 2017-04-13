@@ -37,6 +37,7 @@ public class GameBoard  {
     private MediaPlayer win = new MediaPlayer(new Media(new File("winner.wav").toURI().toString()));
     private BorderPane countDownPane;
     private boolean mute = false;
+    private int countDown = 0;
     
     //constructor that fills the grid pane with "walls" and "empty cells"
     //it also initializes all of the global variables
@@ -155,7 +156,7 @@ public class GameBoard  {
         time.setCycleCount(Timeline.INDEFINITE); //this means the timeline runs forever unless stopped
 
         //add the GridPane and the invisible button to the "realGameArea"
-        realGameArea.getChildren().addAll(pane,winBoxPane);
+        realGameArea.getChildren().addAll(pane,winBoxPane, countDownPane);
     }
 
     //start the timer again from the beginning
