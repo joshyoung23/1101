@@ -35,6 +35,7 @@ public class GameBoard  {
     Media crash = new Media(new File("crash.wav").toURI().toString());
     Media song = new Media(new File("song.wav").toURI().toString());
     Media win = new Media(new File("winner.wav").toURI().toString());
+    private BorderPane countDownPane;
 
 
     MediaPlayer mediaPlayer = new MediaPlayer(song);
@@ -64,6 +65,19 @@ public class GameBoard  {
             MediaPlayer mediaPlayer = new MediaPlayer(click);
             mediaPlayer.play();
         });
+        //create a countdown Text box
+        Label countDownText = new Label();
+            countDownText.setFont(winFont);
+            countDownText.setAlignment(Pos.CENTER);
+        
+        //create a pane to hold the countdown text
+        BorderPane countDownPane = new BorderPane();
+            countDownPane.setPrefSize(340,200);
+            countDownPane.setAlignment(countDownText,Pos.CENTER);
+            countDownPane.setCenter(countDownText);
+            countDownPane.setTranslateX(50);
+            countDownPane.setTranslateY(80);
+            countDownPane.setVisible(true);
 
         //create the label that displays the winner
         winner = new Label();
@@ -114,24 +128,36 @@ public class GameBoard  {
 
         //create the timeline which renders and redraws the player icons as long as there is no winner
         time = new Timeline(new KeyFrame(Duration.millis(150), e-> { //<<<- duration is how quickly the game renders()
+            if(countDown < 20){
+               countDownPane.setVisible(true);
+               if(countDown <= 6)
+                  countDownText.setText("Game starting in... 3");
+               else if(countDown >= 14)
+                  countDownText.setText("Game starting in... 1");
+               else
+                  countDownText.setText("Game starting in... 2");
+               countDown++;
+            }
+            else {
+                countDownPane.setVisible(false); 
+                if(winner() && count == 1){     //if there IS a winner, make the "return to main menu" button appear
+                    count = 0;                  //set count to 0 so that the button only appears once
+                    winBox.setVisible(true);
+                    mediaPlayer.stop();
+                    mediaPlayer = new MediaPlayer(crash);
+                    mediaPlayer.play();
+                    mediaPlayer.setOnEndOfMedia(new Runnable() {
+                        @Override
+                        public void run() {
+                            mediaPlayer = new MediaPlayer(win);
+                            mediaPlayer.play();
+                        }
+                    });
 
-            if(winner() && count == 1){     //if there IS a winner, make the "return to main menu" button appear
-                count = 0;                  //set count to 0 so that the button only appears once
-                winBox.setVisible(true);
-                mediaPlayer.stop();
-                mediaPlayer = new MediaPlayer(crash);
-                mediaPlayer.play();
-                mediaPlayer.setOnEndOfMedia(new Runnable() {
-                    @Override
-                    public void run() {
-                        mediaPlayer = new MediaPlayer(win);
-                        mediaPlayer.play();
-                    }
-                });
-
-            }else if(!winner()) {
-                render();
-                drawIcons();
+                }else if(!winner()) {
+                    render();
+                    drawIcons();
+                }
             }
         }));
         time.setCycleCount(Timeline.INDEFINITE); //this means the timeline runs forever unless stopped
@@ -202,6 +228,10 @@ public class GameBoard  {
 
         //set count back to 1
         count = 1;
+        
+        //set countDown back to 0
+        countDown = 0;
+        
         //hide the "return to main menu" button again
         winBoxPane.setVisible(false);
     }
