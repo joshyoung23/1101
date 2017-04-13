@@ -26,7 +26,8 @@ public class Main extends Application {
    	private MediaPlayer click = new MediaPlayer(new Media(new File("click.wav").toURI().toString()));
    	private MediaPlayer pause = new MediaPlayer(new Media(new File("pause.wav").toURI().toString()));
    	private MediaPlayer resume = new MediaPlayer(new Media(new File("play.wav").toURI().toString()));
-
+	private boolean mute = false;
+	
 	public static void main(String[] args){
 		launch(args);
 	}
@@ -43,7 +44,15 @@ public class Main extends Application {
 
 		DropShadow dshadow = new DropShadow();
 		
-		//create three buttons (play, exit, options)
+		//create four buttons (play, exit, options, mute)
+      
+      		Button muteButton = new Button("Mute");
+         		muteButton.setEffect(dshadow);
+			muteButton.setStyle("-fx-font: 15 arial; -fx-base: #ed1c24;");
+         		muteButton.setTranslateY(200);
+         
+         		muteButton.setOnMouseEntered(e -> select.play());
+         		muteButton.setOnMouseExited(e -> select.stop());
 		
 		Button playButton = new Button("Play");
 			playButton.setEffect(dshadow);
@@ -102,6 +111,7 @@ public class Main extends Application {
 			//sets where the vbox and hbox should be 
      			menu.setCenter(vbox);
      			menu.setTop(hbox);
+			menu.setRight(muteButton);
 		
 		//create the two scenes (one for the menu, one for the gameArea)
 		mainMenu = new Scene(menu, 440, 440, Color.LIGHTGRAY);
@@ -112,6 +122,29 @@ public class Main extends Application {
 		//by default start by displaying the main menu
 		window.setScene(mainMenu);
 
+		//when they click the mute Button
+      		muteButton.setOnMousePressed(e -> click.play());
+      		muteButton.setOnMouseReleased(e -> {
+         		click.stop();
+         		if(!mute){
+				select.setMute(true);
+				click.setMute(true);
+				pause.setMute(true);
+				resume.setMute(true);
+				mute = true;
+				gameboard.toggleMute();
+				muteButton.setText("UnMute");
+			 } else {
+				select.setMute(false);
+				click.setMute(false);
+				pause.setMute(false);
+				resume.setMute(false);
+				mute = false;
+				gameboard.toggleMute();
+				muteButton.setText("Mute");
+			 } 
+		});   
+		
 		//when they click the play button
       		playButton.setOnMousePressed(e -> click.play());
 		playButton.setOnMouseReleased(e ->{
