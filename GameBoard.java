@@ -30,18 +30,14 @@ public class GameBoard  {
     private VBox winBox;   //holds the "Return to main menu" button and the label
     private BorderPane winBoxPane; //holds the winBox centered in the scene. Appears on game ending. 
     private Font winFont = new Font("Impact",40); //call of duty font L M A O
-    Media select = new Media(new File("select.wav").toURI().toString());
-    Media click = new Media(new File("click.wav").toURI().toString());
-    Media crash = new Media(new File("crash.wav").toURI().toString());
-    Media song = new Media(new File("song.wav").toURI().toString());
-    Media win = new Media(new File("winner.wav").toURI().toString());
+    private MediaPlayer select = new MediaPlayer(new Media(new File("select.wav").toURI().toString()));
+    private MediaPlayer click = new MediaPlayer(new Media(new File("click.wav").toURI().toString()));
+    private MediaPlayer crash = new MediaPlayer(new Media(new File("crash.wav").toURI().toString()));
+    private MediaPlayer song = new MediaPlayer(new Media(new File("song.wav").toURI().toString()));
+    private MediaPlayer win = new MediaPlayer(new Media(new File("winner.wav").toURI().toString()));
     private BorderPane countDownPane;
-
-
-    MediaPlayer mediaPlayer = new MediaPlayer(song);
-
-
-
+    private boolean mute = false;
+    
     //constructor that fills the grid pane with "walls" and "empty cells"
     //it also initializes all of the global variables
     public GameBoard(Player p1, Player p2, Stage stage, Scene scene){
@@ -56,15 +52,14 @@ public class GameBoard  {
 
         //create a new button that returns the user to the main menu
         button = new Button("Game Over, Return to Menu");
-        button.setOnMouseEntered( event -> {
-            MediaPlayer mediaPlayer = new MediaPlayer(select);
-            mediaPlayer.play();
-        });
-        button.setOnAction(e -> {
-            window.setScene(menu);
-            MediaPlayer mediaPlayer = new MediaPlayer(click);
-            mediaPlayer.play();
-        });
+            button.setOnMouseEntered( event -> select.play());
+            button.setOnMouseExited(e -> select.stop());
+            button.setOnMousePressed(e -> click.play());
+            button.setOnMouseReleased(e -> {
+                window.setScene(menu);
+                click.stop();
+            });
+        
         //create a countdown Text box
         Label countDownText = new Label();
             countDownText.setFont(winFont);
@@ -129,32 +124,29 @@ public class GameBoard  {
         //create the timeline which renders and redraws the player icons as long as there is no winner
         time = new Timeline(new KeyFrame(Duration.millis(150), e-> { //<<<- duration is how quickly the game renders()
             if(countDown < 20){
-               countDownPane.setVisible(true);
-               if(countDown <= 6)
-                  countDownText.setText("Game starting in... 3");
-               else if(countDown >= 14)
-                  countDownText.setText("Game starting in... 1");
-               else
-                  countDownText.setText("Game starting in... 2");
-               countDown++;
-            }
+                countDownPane.setVisible(true);
+                if(countDown <= 6)
+                    countDownText.setText("Game starting in... 3");
+                else if(countDown >= 14)
+                    countDownText.setText("Game starting in... 1");
+                else
+                    countDownText.setText("Game starting in... 2");
+                countDown++;
+                }
             else {
                 countDownPane.setVisible(false); 
                 if(winner() && count == 1){     //if there IS a winner, make the "return to main menu" button appear
                     count = 0;                  //set count to 0 so that the button only appears once
-                    winBox.setVisible(true);
-                    mediaPlayer.stop();
-                    mediaPlayer = new MediaPlayer(crash);
-                    mediaPlayer.play();
-                    mediaPlayer.setOnEndOfMedia(new Runnable() {
+                    winBoxPane.setVisible(true);
+                    song.stop();
+                    crash.play();
+                    crash.setOnEndOfMedia(new Runnable() {
                         @Override
                         public void run() {
-                            mediaPlayer = new MediaPlayer(win);
-                            mediaPlayer.play();
+                            win.play();
                         }
                     });
-
-                }else if(!winner()) {
+                } else if(!winner()) {
                     render();
                     drawIcons();
                 }
@@ -169,37 +161,56 @@ public class GameBoard  {
     //start the timer again from the beginning
     public void start(){
         time.playFromStart();
-        mediaPlayer = new MediaPlayer(song);
-        mediaPlayer.setOnEndOfMedia(new Runnable() {
+        song.setOnEndOfMedia(new Runnable() {
             @Override
             public void run() {
-                mediaPlayer.seek(Duration.ZERO);
+                song.seek(Duration.ZERO);
             }
         });
-        mediaPlayer.play();
+        song.play();
     }
 
     //un-pause the timer
     public void play(){
         time.play();
-        mediaPlayer.play();
+        song.play();
     }
 
     //pause the timer
     public void pause(){
         time.pause();
-        mediaPlayer.pause();
+        song.pause();
     }
 
     //get method to return the "realGameArea" to the main class so it can be displayed in a scene
     public Pane getPane(){
         return realGameArea;
     }
+    
+    //method that toggles mute on/off for the gameboard
+    public void toggleMute(){
+        if(!mute){
+            mute = true;
+            select.setMute(true);
+            click.setMute(true);
+            crash.setMute(true);
+            song.setMute(true);
+            win.setMute(true);
+        } else {
+            mute = false;
+            select.setMute(false);
+            click.setMute(false);
+            crash.setMute(false);
+            song.setMute(false);
+            win.setMute(false);
+        }  
+    } 
 
     //stop the timer, reset each player and re-fill the game board with EMPTY and WALL cells
     public void reset(){
         time.stop();
-        mediaPlayer.stop();
+        song.stop();
+        win.stop();
         p1.reset();
         p2.reset();
         //fill the array with EMPTY cells
